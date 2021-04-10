@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import RegisterPage from "../../pages/Register/Register";
-import connect from "react-redux";
-import actions from "../../redux/auth";
+import { connect } from "react-redux";
+import { operations } from "../../redux/auth";
+import selectors from "../../redux/auth/selectors";
 
 class RegisterForm extends Component {
   state = {
@@ -11,8 +11,6 @@ class RegisterForm extends Component {
   };
 
   handleChange = (event) => {
-    console.log(event.target.value);
-    console.log(event.target.name);
     const { name, value } = event.target;
     this.setState({ [name]: value });
   };
@@ -26,8 +24,8 @@ class RegisterForm extends Component {
       password,
     };
 
-    this.props.onRegister(user);
-    
+    this.props.onRegister(newUser);
+
     this.setState({
       name: "",
       email: "",
@@ -37,21 +35,34 @@ class RegisterForm extends Component {
 
   render() {
     const { handleSubmit, handleChange } = this;
+    const { name, email, password } = this.state;
+
     return (
       <>
         <form action="" onSubmit={handleSubmit}>
           <input
+            value={name}
             name="name"
             type="text"
             onChange={handleChange}
             placeholder="name"
+            required
           />
-          <input name="email" type="email" placeholder="email" />
           <input
+            value={email}
+            name="email"
+            type="email"
+            placeholder="email"
+            onChange={handleChange}
+            required
+          />
+          <input
+            value={password}
             name="password"
             type="password"
             onChange={handleChange}
             placeholder="password"
+            required
           />
           <button type="submit" onChange={handleChange}>
             register
@@ -62,6 +73,15 @@ class RegisterForm extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {};
+const mapStateToProps = (store) => {
+  return {
+    // myStore: store.users,
+    myStore: selectors.getAllUsers(store),
+  };
+};
 
-export default connect(null, mapDispatchToProps)(RegisterForm);
+const mapDispatchToProps = {
+  onRegister: operations.register,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);

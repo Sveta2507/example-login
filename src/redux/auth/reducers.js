@@ -4,19 +4,38 @@ import {
   loginSuccess,
   logoutSuccess,
   currentSuccess,
+  registerError,
+  loginError,
+  logoutError,
+  currentError,
 } from "./actions";
 
 const initState = {
-  name: "",
-  email: "",
-  password: "",
+  name: null,
+  email: null,
+  password: null,
 };
 
-const user = createReducer(initState, {
-  [registerSuccess]: (_, action) => action.payload.user,
-  [loginSuccess]: (_, action) => action.payload.user,
+const userReducer = createReducer(initState, {
+  [registerSuccess]: (_, { payload }) => payload.user,
+  [loginSuccess]: (_, { payload }) => payload.user,
   [logoutSuccess]: () => initState,
-  [currentSuccess]: (_, action) => action.payload.user,
+  [currentSuccess]: (_, { payload }) => payload.user,
+});
+const tokenReducer = createReducer(null, {
+  [registerSuccess]: (_, { payload }) => payload.token,
+  [loginSuccess]: (_, { payload }) => payload.token,
+  [logoutSuccess]: () => null,
+});
+const errorReducer = createReducer(null, {
+  [registerError]: (_, { payload }) => payload,
+  [loginError]: (_, { payload }) => payload,
+  [logoutError]: (_, { payload }) => payload,
+  [currentError]: (_, { payload }) => payload,
 });
 
-export default combineReducers({ user });
+export default combineReducers({
+  user: userReducer,
+  token: tokenReducer,
+  error: errorReducer,
+});
